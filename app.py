@@ -12,6 +12,13 @@ def index():
 
 app.route('/admincreate',methods=['GET','POST'])
 def admincreate():
+    if request.method=='POST':
+        username=request.form['username']
+        email=request.form['email']
+        password=request.form['password']
+        address=request.form['address']
+        accept=request.form['agree']
+        print(request.form)
     return render_template('admincreate.html')
 
 
