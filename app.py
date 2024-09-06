@@ -127,5 +127,24 @@ def adminlogout():
         session.pop(session.get('email'))
         return redirect(url_for('adminlogin'))
     else:
-        return redirect(url_for('adminlogin'))              
+        return redirect(url_for('adminlogin'))  
+    
+@app.route('/delete_item')
+def delete_item():
+    if not session.get('email'):
+        render_template(url_for('adminlogin'))
+    else:
+        cursor=mydb.cursor(buffered=True)
+        cursor.execute()
+
+        
+        
+@app.route('/remove/<itemid>')
+def remove(itemid):
+    if session.get('useremail'):
+        print(session.get('useremail'))
+        session[session.get('useremail')].pop(itemid)
+        return redirect(url_for('veiwall'))
+    return redirect(url_for('userlogin'))
+        
 app.run(debug=True,use_reloader=True)

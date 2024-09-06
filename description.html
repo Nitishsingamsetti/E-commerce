@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image and Details Side by Side</title>
+    <style>
+        body{
+            background: url("https://t4.ftcdn.net/jpg/09/17/85/71/240_F_917857193_oeOh9DfFq07ZFBZR9CfpVFtbPusKlbGc.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px;
+        }
+
+        .image-container {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .details-container {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .details-container h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  {% for message in messages %}
+    <center>{{ message }}</center>
+  {% endfor %}
+{% endif %}
+{% endwith %}
+<body>
+<div class="container">
+    <div class="image-container">
+        <img src="/static/{{item_data[5]}}" alt="Descriptive Alt Text">
+    </div>
+    <div class="details-container">
+        <h1 class="card title"><span>Name:- </span>{{item_data[1]}}</h1><br/>
+        <h2 class="card title"><span>Item_id:- </span>{{item_data[0]}}</h2><br/>
+        <h3 class="card text"><span>Description:- </span>{{item_data[2]}}</h3><br/>
+        <h3 class="card title"><span>Category:- </span>{{item_data[4]}}</h3><br/>
+        <h4 class="card title"><span>Price:- </span>{{item_data[3]}}</h4><br/>
+        <h4 class="card title"><span>Avaible Stock:- </span>{{item_data[6]}}</h4><br/>
+        {% if session.get('useremail') %}
+        <a href="{{url_for('addreview',itemid=item_data[0])}}"><button class="btn btn-primary">ADD REVIEW</button></a>
+        {% endif %}
+        <a href="#"><button class="btn btn-success">ADD CART</button></a>
+        <a href="{{url_for('readreview',itemid=item_data[0])}}"><button class="btn btn-primary">READ REVIEW</button></a>
+        <a href="{{url_for('index')}}"><button class="btn btn-success">BACK</button></a>
+       
+    </div>
+</div>
+
+</body>
+</html>
