@@ -7,7 +7,7 @@ from cmail import sendmail
 import os
 app=Flask(__name__)
 app.config['SESSION_TYPE']='filesystem'
-mydb=mysql.connector.connect(host='localhost',username='root',password='Raju',db='ecommy')
+mydb=mysql.connector.connect(host='localhost',username='root',password='nitish',db='ecommy')
 app.secret_key=b'I|\xbf\x9f'
 @app.route('/')
 def home():
@@ -119,7 +119,7 @@ def additem():
             cursor.execute('insert into items(item_id,item_name,description,price,quantity,image_name,added_by,category) values(uuid_to_bin(uuid()),%s,%s,%s,%s,%s,%s,%s)',[item_name,description,price,quantity,filename,session.get('email'),category])
             mydb.commit()
             cursor.close()
-            flash(f'Item {item_name} added successfully')
+            flash(f'Item {item_name} added successfully') 
     return render_template('additem.html') 
 @app.route('/adminlogout')
 def adminlogout():
