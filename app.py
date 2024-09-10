@@ -152,11 +152,25 @@ def search():
     if request.method=='POST':
         name=request.form['search']
         strg=['a-zA-Z0-9']
-        pattern=re.compile(f'{strg}',re.IGNORENCE)
-        query='select '
+        pattern=re.compile(f'{strg}',re.IGNORECASE)
+        query='select bin_to_build(u_id),item_name,description,price,quantity'
         search_pram=f'%{name}%'
         cursor.execute(query,{search_pram,search_pram,search_pram,search_pram})
         data=cursor.fetchall()
-        return render_template('dashbord.html',) 
+        return render_template('dashbord.html',items_data=data)
+    else:
+        flash('result not found')
         
+app.route('/contact_us',methods=['POST','GET'])
+def contact_us():
+    if request.method=='POST':
+        name=request.form['name']
+        email=request.form['email']
+        text=request.form['text']
+    
+    
+    
+    
+    return render_template('contact.html')
+                
 app.run(debug=True,use_reloader=True)
