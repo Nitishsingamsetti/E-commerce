@@ -5,6 +5,7 @@ from otp import genotp
 from stoken import token,dtoken
 from cmail import sendmail
 import os
+import re
 app=Flask(__name__)
 app.config['SESSION_TYPE']='filesystem'
 mydb=mysql.connector.connect(host='localhost',username='root',password='nitish',db='ecommy')
@@ -146,5 +147,16 @@ def remove(itemid):
         session[session.get('useremail')].pop(itemid)
         return redirect(url_for('veiwall'))
     return redirect(url_for('userlogin'))
+
+def search():
+    if request.method=='POST':
+        name=request.form['search']
+        strg=['a-zA-Z0-9']
+        pattern=re.compile(f'{strg}',re.IGNORENCE)
+        query='select '
+        search_pram=f'%{name}%'
+        cursor.execute(query,{search_pram,search_pram,search_pram,search_pram})
+        data=cursor.fetchall()
+        return render_template('dashbord.html',) 
         
 app.run(debug=True,use_reloader=True)
