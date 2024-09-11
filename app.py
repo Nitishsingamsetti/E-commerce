@@ -11,7 +11,7 @@ app=Flask(__name__)
 app.config['SESSION_TYPE']='filesystem'
 RAZORPAY_KEY_ID='rzp_test_Rxy19zNIFo9p8r'
 RAZORPAY_KEY_SECRET='eIHxmEyJqhKzZ10tHEy7Kkkc'
-client= razorpay.Client(auth=(RAZORPAY_KEY_ID,RAZORPAY_KEY_SECRET))
+client= razorpay.Client(auth=(RAZORPAY_KEY_ID,RAZORPAY_KEY_SECRET)+)
 mydb=mysql.connector.connect(host='localhost',username='root',password='nitish',db='ecommy')
 app.secret_key=b'I|\xbf\x9f'
 @app.route('/')
@@ -190,11 +190,21 @@ def veiwcontact():
     data=cursor.fetchall()
     return render_template('veiwcontatc.html',items_data=data)
 
-@app.route('/pay/<itemid>/<name>/<int:price>')
+@app.route('/pay/<itemid>/<name>/<int:price',methods=['GET','POST'])
 def pay(itemid,name,price):
     try:
-        amount= price *100
-        
+        amount=price*100   #convert price into price
+        print(f'creating payment for item:{itemid},name:{name},price:{price}')
+        #create razorpay oredr
+        order=client.order.create({
+            'amount':amount,
+            'currency':'INR',
+            'payment_capture':'1'
+        })
+        print(f'order created: {order}')
+        return render_template('pay.html',order=order,itemid=itemid,name=name,price=price)
+    except Exception as e :
+        return str(e),400
         
     
     
