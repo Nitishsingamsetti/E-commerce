@@ -6,8 +6,12 @@ from stoken import token,dtoken
 from cmail import sendmail
 import os
 import re
+import razorpay
 app=Flask(__name__)
 app.config['SESSION_TYPE']='filesystem'
+RAZORPAY_KEY_ID='rzp_test_Rxy19zNIFo9p8r'
+RAZORPAY_KEY_SECRET='eIHxmEyJqhKzZ10tHEy7Kkkc'
+client= razorpay.Client(auth=(RAZORPAY_KEY_ID,RAZORPAY_KEY_SECRET))
 mydb=mysql.connector.connect(host='localhost',username='root',password='nitish',db='ecommy')
 app.secret_key=b'I|\xbf\x9f'
 @app.route('/')
@@ -155,22 +159,45 @@ def search():
         pattern=re.compile(f'{strg}',re.IGNORECASE)
         query='select bin_to_build(u_id),item_name,description,price,quantity'
         search_pram=f'%{name}%'
+        cursor=mydb.cursor(buffered=True)
         cursor.execute(query,{search_pram,search_pram,search_pram,search_pram})
         data=cursor.fetchall()
         return render_template('dashbord.html',items_data=data)
     else:
         flash('result not found')
         
-app.route('/contact_us',methods=['POST','GET'])
-def contact_us():
+app.route('/contactus',methods=['POST','GET'])
+def contactus():
     if request.method=='POST':
         name=request.form['name']
         email=request.form['email']
         text=request.form['text']
+        cursor=mydb.cursor(buffered=True)
+        cursor.execute('insert into contact_us values (%s,%s,%s)',[name,email,text])
+        mydb.commit()
+        cursor.close()
+        return render_template(url_for('contactus'))
     
     
     
     
     return render_template('contact.html')
+
+app.route('/veiwcontact')
+def veiwcontact():
+    cursor=mydb.cursor(buffered=True)
+    cursor.execute('select * from contact_us')
+    data=cursor.fetchall()
+    return render_template('veiwcontatc.html',items_data=data)
+
+@app.route('/pay/<itemid>/<name>/<int:price>')
+def pay(itemid,name,price):
+    try:
+        amount= price *100
+        
+        
+    
+    
+    
                 
 app.run(debug=True,use_reloader=True)
