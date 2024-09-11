@@ -205,6 +205,24 @@ def pay(itemid,name,price):
         return render_template('pay.html',order=order,itemid=itemid,name=name,price=price)
     except Exception as e :
         return str(e),400
+    
+@app.route('//success',methods=['POST'])
+def success():
+    #extract payment details from, the form
+    payment_id=request.form.get('razorpay_payment_id')
+    order_id=request.form.get('razrpay_order_id')
+    signature=request.form.get('razorpay_signature')
+
+    #verification process
+    params_dict={'razorpay_payment_id':order_id,'razrpay_order_id':payment_id,'razorpay_signature':signature}
+    try:
+        client.utility.verify_payment_signature(params_dict)
+        return redirect(url_for("orders"))
+    except razorpay.errors.SignatureVerificationError:
+        return 'payment verification failed',400
+@app.route('/orders')
+def orders():
+    return 'hi'
         
     
     
