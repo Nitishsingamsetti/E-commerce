@@ -14,7 +14,10 @@ config=pdfkit.configuration(wkhtmltopdf='C:\Program Files\wkhtmltopdf\bin\wkhtml
 RAZORPAY_KEY_ID='rzp_test_Rxy19zNIFo9p8r'
 RAZORPAY_KEY_SECRET='eIHxmEyJqhKzZ10tHEy7Kkkc'
 client= razorpay.Client(auth=(RAZORPAY_KEY_ID,RAZORPAY_KEY_SECRET))
-mydb=mysql.connector.connect(host='localhost',username='root',password='nitish',db='ecommy')
+#mydb=mysql.connector.connect(host='localhost',username='root',password='nitish',db='ecommy')
+user=os.environ.get('RDS_USERNAME')
+db=os.environ.get('RDS_DB_NAME')
+
 app.secret_key=b'I|\xbf\x9f'
 @app.route('/')
 def home():
