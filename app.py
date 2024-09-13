@@ -193,7 +193,9 @@ def veiwcontact():
 @app.route('/pay/<itemid>/<name>/<int:price',methods=['GET','POST'])
 def pay(itemid,name,price):
     try:
-        amount=price*100   #convert price into price
+        qyt=int(request.form('qyt'))
+        amount=price*100    #convert price into price
+        total_price = amount * qyt
         print(f'creating payment for item:{itemid},name:{name},price:{price}')
         #create razorpay oredr
         order=client.order.create({
