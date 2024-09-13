@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,flash,redirect,url_for,session
+from flask import Flask,render_template,request,flash,redirect,url_for,session,Response
 import mysql.connector
 from flask_session import Session
 from otp import genotp
@@ -7,11 +7,13 @@ from cmail import sendmail
 import os
 import re
 import razorpay
+import pdfkit
 app=Flask(__name__)
 app.config['SESSION_TYPE']='filesystem'
+config=pdfkit.configuration(wkhtmltopdf='C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
 RAZORPAY_KEY_ID='rzp_test_Rxy19zNIFo9p8r'
 RAZORPAY_KEY_SECRET='eIHxmEyJqhKzZ10tHEy7Kkkc'
-client= razorpay.Client(auth=(RAZORPAY_KEY_ID,RAZORPAY_KEY_SECRET)+)
+client= razorpay.Client(auth=(RAZORPAY_KEY_ID,RAZORPAY_KEY_SECRET))
 mydb=mysql.connector.connect(host='localhost',username='root',password='nitish',db='ecommy')
 app.secret_key=b'I|\xbf\x9f'
 @app.route('/')
@@ -225,6 +227,28 @@ def success():
 @app.route('/orders')
 def orders():
     return 'hi'
+
+@app.route('/billdetails/<ordid>.pdf')
+def invoice(ordid):
+    if session.get('username'):
+        cursor=mydb.cursor(buffered=True)
+        cursor.execute('select * from orders where ordid=%s',[ordid])
+        orders=cursor.fetchone()
+        username=orders[5]        
+        oname=orders[2]        
+        qty=orders[3]        
+        cost=orders[4]
+        cursor.execute('select username,address,user_email from usercreate where user_email=%s',[username])
+        data=cursor.fetchone()
+        uname=data[0]
+        uaddress=data[1]
+        html=render_template('bill.html',uname=uname,uaddress=uaddress,oname=oname,qty=qty,cost=cost)
+        pdf=pdfkit.from_string(html,False,configuration=config)
+        response=Response(pdf,content_type='application/pdf')
+        response.headers['content-Disposition']='inline;filename=output.pdf'
+        return response
+        
+               
         
     
     
